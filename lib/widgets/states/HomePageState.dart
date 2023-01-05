@@ -45,8 +45,6 @@ class HomePageState extends State<HomePage> {
     }
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         middle: Text(widget.title),
         trailing: CupertinoButton(
           onPressed: _bleHandler.connect,
@@ -190,7 +188,7 @@ class HomePageState extends State<HomePage> {
             )
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

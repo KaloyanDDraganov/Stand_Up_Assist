@@ -8,31 +8,31 @@ class BluetoothHandler {
   late HomePageState _pageState;
   late StandUpCounter _standUpCounter;
 
-  int _acc_x = 0;
-  int _acc_y = 0;
-  int _acc_z = 0;
+  int _accX = 0;
+  int _accY = 0;
+  int _accZ = 0;
 
   bool _isConnected = false;
 
   bool earConnectFound = false;
 
   void setState(HomePageState state) {
-    this._pageState = state;
+    _pageState = state;
   }
 
   void setStandUpCounter(StandUpCounter standUpCounter) {
-    this._standUpCounter = standUpCounter;
+    _standUpCounter = standUpCounter;
   }
 
   void updateAccelerometer(rawData) {
     Int8List bytes = Int8List.fromList(rawData);
 
     // description based on placing the earable into your right ear canal
-    _acc_x = bytes[14];
-    _acc_y = bytes[16];
-    _acc_z = bytes[18];
+    _accX = bytes[14];
+    _accY = bytes[16];
+    _accZ = bytes[18];
 
-    _standUpCounter.handleUpdate(_acc_x, _acc_y, _acc_z);
+    _standUpCounter.handleUpdate(_accX, _accY, _accZ);
   }
 
   int twosComplimentOfNegativeMantissa(int mantissa) {
@@ -94,19 +94,17 @@ class BluetoothHandler {
                     0x34,
                     0x35
                   ]);
-                  await Future.delayed(new Duration(
+                  await Future.delayed(const Duration(
                       seconds:
                           2)); // short delay before next bluetooth operation otherwise BLE crashes
                   characteristic.value
                       .listen((rawData) => {updateAccelerometer(rawData)});
                   await characteristic.setNotifyValue(true);
-                  await Future.delayed(new Duration(seconds: 2));
+                  await Future.delayed(const Duration(seconds: 2));
                   break;
               }
             }
-            ;
           }
-          ;
         }
       }
     });

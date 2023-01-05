@@ -6,11 +6,11 @@ import '../widgets/NudgerAlert.dart';
 class StandUpCounter {
   late HomePageState _homePageState;
 
-  var _acc_y_baseline = 0;
+  var _accYBaseline = 0;
   final ALPHA = 0.125;
   final STAND_UP_THRESHOLD = 0.8;
-  var _total_stand_ups = 0;
-  var _stand_up_this_hour = false;
+  var _totalStandUps = 0;
+  var _stoodThisHour = false;
 
   DateTime currentDate = DateTime.now();
 
@@ -18,21 +18,21 @@ class StandUpCounter {
     _homePageState = state;
   }
 
-  void handleUpdate(int acc_x, int acc_y, int acc_z) {
-    _updateAccYBaseline(acc_y);
-    _detectStandUp(acc_y);
+  void handleUpdate(int accX, int accY, int accZ) {
+    _updateAccYBaseline(accY);
+    _detectStandUp(accY);
   }
 
-  void _updateAccYBaseline(int _acc_y) {
-    _acc_y_baseline = (_acc_y * ALPHA + _acc_y_baseline * (1 - ALPHA)) as int;
+  void _updateAccYBaseline(int accY) {
+    _accYBaseline = (accY * ALPHA + _accYBaseline * (1 - ALPHA)) as int;
   }
 
-  void _detectStandUp(int _acc_y) {
-    if (!_stand_up_this_hour) {
-      if (_acc_y - _acc_y_baseline > STAND_UP_THRESHOLD) {
-        _stand_up_this_hour = true;
-        _total_stand_ups++;
-        _homePageState.updateStandUpHours(_total_stand_ups);
+  void _detectStandUp(int accY) {
+    if (!_stoodThisHour) {
+      if (accY - _accYBaseline > STAND_UP_THRESHOLD) {
+        _stoodThisHour = true;
+        _totalStandUps++;
+        _homePageState.updateStandUpHours(_totalStandUps);
       }
     }
   }
@@ -44,53 +44,53 @@ class StandUpCounter {
   }
 
   void _scheduleNextHour() {
-    var now = new DateTime.now();
-    var nextHour = new DateTime(now.year, now.month, now.day, now.hour + 1);
+    var now = DateTime.now();
+    var nextHour = DateTime(now.year, now.month, now.day, now.hour + 1);
     var delay = nextHour.difference(now);
-    new Timer(delay, _handleNewHour);
+    Timer(delay, _handleNewHour);
   }
 
   void _scheduleNextNudge() {
-    var now = new DateTime.now();
-    var nextHour;
+    var now = DateTime.now();
+    DateTime nextHour;
     if (now.minute < 50) {
-      nextHour = new DateTime(now.year, now.month, now.day, now.hour, 50);
+      nextHour = DateTime(now.year, now.month, now.day, now.hour, 50);
     } else {
-      nextHour = new DateTime(now.year, now.month, now.day, now.hour + 1, 50);
+      nextHour = DateTime(now.year, now.month, now.day, now.hour + 1, 50);
     }
     var delay = nextHour.difference(now);
-    new Timer(delay, _handleNewNudge);
+    Timer(delay, _handleNewNudge);
   }
 
   //TODO: delete me :)
   void testIncr() {
-    _total_stand_ups++;
-    _homePageState.updateStandUpHours(_total_stand_ups);
-    new Timer(Duration(seconds: 1), testIncr);
+    _totalStandUps++;
+    _homePageState.updateStandUpHours(_totalStandUps);
+    Timer(const Duration(seconds: 1), testIncr);
   }
 
   void _scheduleNextDay() {
-    var now = new DateTime.now();
-    var nextHour = new DateTime(now.year, now.month, now.day + 1, now.hour);
+    var now = DateTime.now();
+    var nextHour = DateTime(now.year, now.month, now.day + 1, now.hour);
     var delay = nextHour.difference(now);
-    new Timer(delay, _handleNewDay);
+    Timer(delay, _handleNewDay);
   }
 
   void _handleNewHour() {
-    _stand_up_this_hour = false;
-    new Timer(Duration(hours: 1), _handleNewHour);
+    _stoodThisHour = false;
+    Timer(const Duration(hours: 1), _handleNewHour);
   }
 
   void _handleNewNudge() {
-    if (!_stand_up_this_hour) {
-      new NudgerAlert().showAlertDialog(_homePageState.context);
+    if (!_stoodThisHour) {
+      NudgerAlert().showAlertDialog(_homePageState.context);
     }
-    new Timer(Duration(hours: 1), _handleNewHour);
+    Timer(const Duration(hours: 1), _handleNewHour);
   }
 
   void _handleNewDay() {
-    _total_stand_ups = 0;
-    _stand_up_this_hour = false;
-    new Timer(Duration(days: 1), _handleNewDay);
+    _totalStandUps = 0;
+    _stoodThisHour = false;
+    Timer(const Duration(days: 1), _handleNewDay);
   }
 }
