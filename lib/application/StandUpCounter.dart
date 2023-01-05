@@ -1,23 +1,21 @@
 import 'dart:async';
 
-import 'package:stand_up_assist/widgets/GoalAccomplishedAlert.dart';
 import 'package:stand_up_assist/widgets/states/HomePageState.dart';
-
 import '../widgets/NudgerAlert.dart';
 
 class StandUpCounter {
   late HomePageState _homePageState;
 
-  int _acc_y_baseline = 0;
-  final double ALPHA = 0.125;
-  final double STAND_UP_THRESHOLD = 0.8;
-  int _total_stand_ups = 0;
-  bool _stand_up_this_hour = false;
+  var _acc_y_baseline = 0;
+  final ALPHA = 0.125;
+  final STAND_UP_THRESHOLD = 0.8;
+  var _total_stand_ups = 0;
+  var _stand_up_this_hour = false;
 
   DateTime currentDate = DateTime.now();
 
   void setState(HomePageState state) {
-    this._homePageState = state;
+    _homePageState = state;
   }
 
   void handleUpdate(int acc_x, int acc_y, int acc_z) {
@@ -68,12 +66,7 @@ class StandUpCounter {
   void testIncr() {
     _total_stand_ups++;
     _homePageState.updateStandUpHours(_total_stand_ups);
-    new Timer(Duration(seconds: 10), testIncr);
-
-    if (_total_stand_ups == 2) {
-      new GoalAccomplishedAlert().showAlertDialog(_homePageState.context);
-      new NudgerAlert().showAlertDialog(_homePageState.context);
-    }
+    new Timer(Duration(seconds: 1), testIncr);
   }
 
   void _scheduleNextDay() {
@@ -97,6 +90,7 @@ class StandUpCounter {
 
   void _handleNewDay() {
     _total_stand_ups = 0;
+    _stand_up_this_hour = false;
     new Timer(Duration(days: 1), _handleNewDay);
   }
 }

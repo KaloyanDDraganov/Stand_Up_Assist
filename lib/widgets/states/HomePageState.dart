@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import '../HomePage.dart';
+import '../GoalAccomplishedAlert.dart';
 import '../../application/BluetoothHandler.dart';
 import '../../application/StandUpCounter.dart';
 
 class HomePageState extends State<HomePage> {
-  BluetoothHandler _bleHandler = new BluetoothHandler();
+  final BluetoothHandler _bleHandler = BluetoothHandler();
   String _bleConnectionStatus = "Disconnected";
-  StandUpCounter _standUpCounter = new StandUpCounter();
+  final StandUpCounter _standUpCounter = StandUpCounter();
   bool init = false;
 
   int _standUpHours = 0;
-  int _goalStandUpHours = 12;
+  final int _goalStandUpHours = 12;
 
   void updateConnectionStatus(bool isConnected) {
     setState(() {
@@ -21,6 +22,10 @@ class HomePageState extends State<HomePage> {
   void updateStandUpHours(int hours) {
     setState(() {
       _standUpHours = hours;
+
+      if (_standUpHours == _goalStandUpHours) {
+        GoalAccomplishedAlert().showAlertDialog(context);
+      }
     });
   }
 
@@ -82,8 +87,8 @@ class HomePageState extends State<HomePage> {
                                   children: [
                                     Text(
                                       '$_standUpHours',
-                                      style:
-                                          TextStyle(height: 1, fontSize: 48.0),
+                                      style: const TextStyle(
+                                          height: 1, fontSize: 48.0),
                                     ),
                                     const Text(
                                       'hrs',
@@ -136,7 +141,8 @@ class HomePageState extends State<HomePage> {
                                 children: [
                                   Text(
                                     '$_goalStandUpHours',
-                                    style: TextStyle(height: 1, fontSize: 48.0),
+                                    style: const TextStyle(
+                                        height: 1, fontSize: 48.0),
                                   ),
                                   const Text(
                                     'hrs',
@@ -159,7 +165,7 @@ class HomePageState extends State<HomePage> {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(bottom: 60),
+                padding: const EdgeInsets.only(bottom: 60),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -171,7 +177,7 @@ class HomePageState extends State<HomePage> {
                                 height: 1,
                                 fontSize: 12.0,
                                 color: CupertinoColors.systemGrey)),
-                        Text('$_bleConnectionStatus'.toUpperCase(),
+                        Text(_bleConnectionStatus.toUpperCase(),
                             style: const TextStyle(
                                 height: 1,
                                 fontSize: 12.0,
