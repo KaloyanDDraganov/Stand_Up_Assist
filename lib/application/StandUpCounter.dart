@@ -10,6 +10,7 @@ class StandUpCounter {
   final ALPHA = 0.125;
   final STAND_UP_THRESHOLD = 0.8;
   var _totalStandUps = 0;
+  var _goalStandUps = 12;
   var _stoodThisHour = false;
 
   DateTime currentDate = DateTime.now();
@@ -82,10 +83,11 @@ class StandUpCounter {
   }
 
   void _handleNewNudge() {
-    if (!_stoodThisHour) {
+    if (!_stoodThisHour && _totalStandUps < _goalStandUps) {
       NudgerAlert().showAlertDialog(_homePageState.context);
+    } else if (_totalStandUps < _goalStandUps) {
+      Timer(const Duration(hours: 1), _handleNewNudge);
     }
-    Timer(const Duration(hours: 1), _handleNewHour);
   }
 
   void _handleNewDay() {

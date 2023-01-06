@@ -5,13 +5,14 @@ import '../../application/BluetoothHandler.dart';
 import '../../application/StandUpCounter.dart';
 
 class HomePageState extends State<HomePage> {
-  final BluetoothHandler _bleHandler = BluetoothHandler();
-  String _bleConnectionStatus = "Disconnected";
-  final StandUpCounter _standUpCounter = StandUpCounter();
-  bool init = false;
+  final _bleHandler = BluetoothHandler();
+  var _bleConnectionStatus = "Disconnected";
+  final _standUpCounter = StandUpCounter();
+  var init = false;
 
-  int _standUpHours = 0;
-  final int _goalStandUpHours = 12;
+  var _standUpHours = 0;
+  final _goalStandUpHours = 12;
+  var _completion = 0;
 
   void updateConnectionStatus(bool isConnected) {
     setState(() {
@@ -22,6 +23,7 @@ class HomePageState extends State<HomePage> {
   void updateStandUpHours(int hours) {
     setState(() {
       _standUpHours = hours;
+      _completion = ((_standUpHours / _goalStandUpHours) * 100).round();
 
       if (_standUpHours == _goalStandUpHours) {
         GoalAccomplishedAlert().showAlertDialog(context);
@@ -44,151 +46,154 @@ class HomePageState extends State<HomePage> {
       _initialize();
     }
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.title),
-        trailing: CupertinoButton(
-          onPressed: _bleHandler.connect,
-          child: const Icon(CupertinoIcons.bluetooth),
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(widget.title),
+          trailing: CupertinoButton(
+            onPressed: _bleHandler.connect,
+            child: const Icon(CupertinoIcons.bluetooth),
+          ),
         ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-                flex: 2,
-                child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 60, right: 60, top: 120, bottom: 60),
-                    child: Row(
+        child: Padding(
+          padding:
+              const EdgeInsets.only(left: 40, right: 40, top: 60, bottom: 60),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                    flex: 3,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                            flex: 6,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                    padding:
-                                        const EdgeInsets.only(bottom: 10.0),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text('Achieved'.toUpperCase(),
-                                              style: const TextStyle(
-                                                  fontSize: 12.0,
-                                                  color: CupertinoColors
-                                                      .systemGrey))
-                                        ])),
-                                Row(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                flex: 6,
+                                child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      '$_standUpHours',
-                                      style: const TextStyle(
-                                          height: 1, fontSize: 48.0),
-                                    ),
-                                    const Text(
-                                      'hrs',
-                                      style:
-                                          TextStyle(height: 2, fontSize: 24.0),
-                                    )
-                                  ],
-                                )
-                              ],
-                            )),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text(
-                                    '/',
-                                    style: TextStyle(
-                                        height: 1,
-                                        fontSize: 48.0,
-                                        color: CupertinoColors.systemGrey),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          flex: 6,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: Row(
+                                    Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20.0),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text('Achieved'.toUpperCase(),
+                                                  style: const TextStyle(
+                                                      fontSize: 12.0,
+                                                      color: CupertinoColors
+                                                          .systemGrey))
+                                            ])),
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text('Goal'.toUpperCase(),
-                                            style: const TextStyle(
-                                                fontSize: 12.0,
-                                                color:
-                                                    CupertinoColors.systemGrey))
-                                      ])),
-                              Row(
+                                        Text(
+                                          '$_standUpHours',
+                                          style: const TextStyle(
+                                              height: 1, fontSize: 48.0),
+                                        ),
+                                        const Text(
+                                          'hrs',
+                                          style: TextStyle(
+                                              height: 2, fontSize: 24.0),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                )),
+                            const Expanded(
+                                flex: 2,
+                                child: Center(
+                                  child: Text(
+                                    '/',
+                                    style: TextStyle(
+                                        fontSize: 96.0,
+                                        color: CupertinoColors.systemGrey),
+                                  ),
+                                )),
+                            Expanded(
+                              flex: 6,
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    '$_goalStandUpHours',
-                                    style: const TextStyle(
-                                        height: 1, fontSize: 48.0),
-                                  ),
-                                  const Text(
-                                    'hrs',
-                                    style: TextStyle(height: 2, fontSize: 24.0),
+                                  Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20.0),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text('Goal'.toUpperCase(),
+                                                style: const TextStyle(
+                                                    fontSize: 12.0,
+                                                    color: CupertinoColors
+                                                        .systemGrey))
+                                          ])),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '$_goalStandUpHours',
+                                        style: const TextStyle(
+                                            height: 1, fontSize: 48.0),
+                                      ),
+                                      const Text(
+                                        'hrs',
+                                        style: TextStyle(
+                                            height: 2, fontSize: 24.0),
+                                      )
+                                    ],
                                   )
                                 ],
-                              )
-                            ],
-                          ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.only(top: 20, bottom: 20),
+                                child: Text(
+                                    '$_completion % complete'.toUpperCase(),
+                                    style: const TextStyle(
+                                        fontSize: 12.0,
+                                        color: CupertinoColors.systemGrey)))
+                          ],
                         ),
                       ],
-                    ))),
-            Expanded(
-                flex: 2,
-                child: FractionallySizedBox(
-                  widthFactor: 0.8,
-                  heightFactor: 1.0,
-                  child: Image.asset('assets/images/standing.png'),
-                )),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 60),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Earables: ',
-                            style: TextStyle(
-                                height: 1,
-                                fontSize: 12.0,
-                                color: CupertinoColors.systemGrey)),
-                        Text(_bleConnectionStatus.toUpperCase(),
-                            style: const TextStyle(
-                                height: 1,
-                                fontSize: 12.0,
-                                color: CupertinoColors.systemGrey))
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+                    )),
+                Expanded(
+                    flex: 4, child: Image.asset('assets/images/standing.png')),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Earables: ',
+                              style: TextStyle(
+                                  height: 1,
+                                  fontSize: 12.0,
+                                  color: CupertinoColors.systemGrey)),
+                          Text(_bleConnectionStatus.toUpperCase(),
+                              style: const TextStyle(
+                                  height: 1,
+                                  fontSize: 12.0,
+                                  color: CupertinoColors.systemGrey))
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
