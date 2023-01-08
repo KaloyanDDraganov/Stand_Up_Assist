@@ -1,6 +1,3 @@
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.protobuf'
-
 buildscript {
     ext.kotlin_version = '1.6.10'
     repositories {
@@ -9,31 +6,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.9.1'
-    }
-
-    protobuf {
-        // Configure the protoc executable
-        protoc {
-            // for apple m1, add protoc_platform=osx-x86_64 in $HOME/.gradle/gradle.properties
-            if (project.hasProperty('protoc_platform')) {
-                artifact = "com.google.protobuf:protoc:3.9.2:${protoc_platform}"
-            } else {
-                artifact = "com.google.protobuf:protoc:3.9.2"
-            }
-        }
-        plugins {
-            javalite {
-                // The codegen for lite comes as a separate artifact
-                if (project.hasProperty('protoc_platform')) {
-                    artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0:${protoc_platform}"
-                } else {
-                    artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
-                }
-            }
-        }
+        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 

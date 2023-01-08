@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kaloyanddraganov.stand_up_assist">
+    package="com.example.stand_up_assist">
    <application
         android:label="stand_up_assist"
         android:name="${applicationName}"
