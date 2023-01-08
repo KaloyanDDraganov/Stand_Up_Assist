@@ -1,20 +1,20 @@
 import 'package:flutter/cupertino.dart';
 
-class NudgerAlert {
+class DisconnectedAlert {
   void showAlertDialog(BuildContext context) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('You are almost there!'),
+        title: const Text('Earables Disconnected!'),
         content: const Text(
-            'Looks like you have not stood up in a while.\n Stand up soon for this hour to count.'),
+            'Unable to monitor your movements while connection is interrupted.'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Got it'),
+            child: const Text('OK'),
           ),
         ],
       ),

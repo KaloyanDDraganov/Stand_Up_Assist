@@ -63,13 +63,6 @@ class StandUpCounter {
     Timer(delay, _handleNewNudge);
   }
 
-  //TODO: delete me :)
-  void testIncr() {
-    _totalStandUps++;
-    _homePageState.updateStandUpHours(_totalStandUps);
-    Timer(const Duration(seconds: 1), testIncr);
-  }
-
   void _scheduleNextDay() {
     var now = DateTime.now();
     var nextHour = DateTime(now.year, now.month, now.day + 1, now.hour);

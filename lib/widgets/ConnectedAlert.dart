@@ -1,20 +1,20 @@
 import 'package:flutter/cupertino.dart';
 
-class NudgerAlert {
+class ConnectedAlert {
   void showAlertDialog(BuildContext context) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('You are almost there!'),
-        content: const Text(
-            'Looks like you have not stood up in a while.\n Stand up soon for this hour to count.'),
+        title: const Text('Earables Connected!'),
+        content: const Text('Your movements are being monitored.\n'
+            'Stand up for an active break!'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Got it'),
+            child: const Text('Okay'),
           ),
         ],
       ),

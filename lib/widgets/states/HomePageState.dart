@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import '../HomePage.dart';
 import '../GoalAccomplishedAlert.dart';
+import '../ConnectedAlert.dart';
+import '../DisconnectedAlert.dart';
 import '../../application/BluetoothHandler.dart';
 import '../../application/StandUpCounter.dart';
 
@@ -18,6 +20,11 @@ class HomePageState extends State<HomePage> {
     setState(() {
       _bleConnectionStatus = (isConnected) ? "Connected" : "Disconnected";
     });
+    if (isConnected) {
+      ConnectedAlert().showAlertDialog(context);
+    } else {
+      DisconnectedAlert().showAlertDialog(context);
+    }
   }
 
   void updateStandUpHours(int hours) {
@@ -36,7 +43,6 @@ class HomePageState extends State<HomePage> {
     _bleHandler.setStandUpCounter(_standUpCounter);
     _standUpCounter.setState(this);
     _standUpCounter.initCounting();
-    _standUpCounter.testIncr();
     init = true;
   }
 
