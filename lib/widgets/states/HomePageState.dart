@@ -1,15 +1,16 @@
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../HomePage.dart';
 import '../GoalAccomplishedAlert.dart';
 import '../ConnectedAlert.dart';
 import '../DisconnectedAlert.dart';
 import '../../application/BluetoothHandler.dart';
-import '../../application/StandUpCounter.dart';
+import '../../application/SleepAnalyzer.dart';
 
 class HomePageState extends State<HomePage> {
   final _bleHandler = BluetoothHandler();
   var _bleConnectionStatus = "Disconnected";
-  final _standUpCounter = StandUpCounter();
+  final _sleepAnalyzer = SleepAnalyzer();
   var init = false;
 
   var _standUpHours = 0;
@@ -40,9 +41,8 @@ class HomePageState extends State<HomePage> {
 
   void _initialize() {
     _bleHandler.setState(this);
-    _bleHandler.setStandUpCounter(_standUpCounter);
-    _standUpCounter.setState(this);
-    _standUpCounter.initCounting();
+    _bleHandler.setSleepAnalyzer(_sleepAnalyzer);
+    _sleepAnalyzer.setState(this);
     init = true;
   }
 
@@ -51,155 +51,42 @@ class HomePageState extends State<HomePage> {
     if (!init) {
       _initialize();
     }
-    return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(widget.title),
-          trailing: CupertinoButton(
-            onPressed: _bleHandler.connect,
-            child: const Icon(CupertinoIcons.bluetooth),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('FloatingActionButton Sample'),
+      ),
+      body: Center(child: Column(children: [
+        // Start button
+        ElevatedButton(
+          onPressed: () {
+          // Perform some action
+          },
+          // textColor: Colors.white,
+          // color: Colors.blue,
+          child: Text("Start"),
         ),
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 40, right: 40, top: 60, bottom: 60),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                    flex: 3,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                flex: 6,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20.0),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text('Achieved'.toUpperCase(),
-                                                  style: const TextStyle(
-                                                      fontSize: 12.0,
-                                                      color: CupertinoColors
-                                                          .systemGrey))
-                                            ])),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '$_standUpHours',
-                                          style: const TextStyle(
-                                              height: 1, fontSize: 48.0),
-                                        ),
-                                        const Text(
-                                          'hrs',
-                                          style: TextStyle(
-                                              height: 2, fontSize: 24.0),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                )),
-                            const Expanded(
-                                flex: 2,
-                                child: Center(
-                                  child: Text(
-                                    '/',
-                                    style: TextStyle(
-                                        fontSize: 96.0,
-                                        color: CupertinoColors.systemGrey),
-                                  ),
-                                )),
-                            Expanded(
-                              flex: 6,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 20.0),
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text('Goal'.toUpperCase(),
-                                                style: const TextStyle(
-                                                    fontSize: 12.0,
-                                                    color: CupertinoColors
-                                                        .systemGrey))
-                                          ])),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '$_goalStandUpHours',
-                                        style: const TextStyle(
-                                            height: 1, fontSize: 48.0),
-                                      ),
-                                      const Text(
-                                        'hrs',
-                                        style: TextStyle(
-                                            height: 2, fontSize: 24.0),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(top: 20, bottom: 20),
-                                child: Text(
-                                    '$_completion % complete'.toUpperCase(),
-                                    style: const TextStyle(
-                                        fontSize: 12.0,
-                                        color: CupertinoColors.systemGrey)))
-                          ],
-                        ),
-                      ],
-                    )),
-                Expanded(
-                    flex: 4, child: Image.asset('assets/images/standing.png')),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('Earables: ',
-                              style: TextStyle(
-                                  height: 1,
-                                  fontSize: 12.0,
-                                  color: CupertinoColors.systemGrey)),
-                          Text(_bleConnectionStatus.toUpperCase(),
-                              style: const TextStyle(
-                                  height: 1,
-                                  fontSize: 12.0,
-                                  color: CupertinoColors.systemGrey))
-                        ],
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ));
+        Column(
+          children: [
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                      Text('Left side: 0'),
+                      Text('Back: 0'),
+                      Text('Right side: 0'),
+                  ],
+              ),
+              Text('Belly: 0'),
+          ],
+        ),
+        ]
+      )),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Perform some action
+        },
+        icon: Icon(Icons.bluetooth),
+        label: const Text("Test")
+      )
+    );
   }
 }

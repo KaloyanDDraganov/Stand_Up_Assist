@@ -1,16 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:stand_up_assist/application/StandUpCounter.dart';
+import 'package:stand_up_assist/application/SleepAnalyzer.dart';
 
 import '../widgets/states/HomePageState.dart';
 
 class BluetoothHandler {
   late HomePageState _pageState;
-  late StandUpCounter _standUpCounter;
-
-  int _accX = 0;
-  int _accY = 0;
-  int _accZ = 0;
+  late SleepAnalyzer _sleepAnalyzer;
 
   bool _isConnected = false;
 
@@ -20,26 +16,24 @@ class BluetoothHandler {
     _pageState = state;
   }
 
-  void setStandUpCounter(StandUpCounter standUpCounter) {
-    _standUpCounter = standUpCounter;
+  void setSleepAnalyzer(SleepAnalyzer sleepAnalyzer) {
+    _sleepAnalyzer = sleepAnalyzer;
   }
 
   void updateAccelerometer(rawData) {
     Int8List bytes = Int8List.fromList(rawData);
 
     // description based on placing the earable into your right ear canal
-    _accX = bytes[14];
-    _accY = bytes[16];
-    _accZ = bytes[18];
-
-    _standUpCounter.handleUpdate(_accX, _accY, _accZ);
+    // int accX = bytes[14];
+    // int accY = bytes[16];
+    int accZ = bytes[18];
+    _sleepAnalyzer.handleUpdate(accZ);
   }
 
   int twosComplimentOfNegativeMantissa(int mantissa) {
     if ((4194304 & mantissa) != 0) {
       return (((mantissa ^ -1) & 16777215) + 1) * -1;
     }
-
     return mantissa;
   }
 
@@ -97,8 +91,7 @@ class BluetoothHandler {
                   await Future.delayed(const Duration(
                       seconds:
                           2)); // short delay before next bluetooth operation otherwise BLE crashes
-                  characteristic.value
-                      .listen((rawData) => {updateAccelerometer(rawData)});
+                  characteristic.value.listen((rawData) => {updateAccelerometer(rawData)});
                   await characteristic.setNotifyValue(true);
                   await Future.delayed(const Duration(seconds: 2));
                   break;
