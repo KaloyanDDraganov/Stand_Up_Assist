@@ -17,15 +17,18 @@ class HomePageState extends State<HomePage> {
   final _goalStandUpHours = 12;
   var _completion = 0;
 
+  final ConnectedAlert connectedAlert = ConnectedAlert();
+  final DisconnectedAlert disconnectedAlert = DisconnectedAlert();
+
   void updateConnectionStatus(bool isConnected) {
     setState(() {
       _bleConnectionStatus = (isConnected) ? "Connected" : "Disconnected";
       if (isConnected) {
-        ConnectedAlert().showAlertDialog(context);
+        connectedAlert.showAlertDialog(context);
         _initialConnect = true;
       }
       if (!isConnected && _initialConnect) {
-        DisconnectedAlert().showAlertDialog(context);
+        disconnectedAlert.showAlertDialog(context);
       }
     });
   }

@@ -50,7 +50,8 @@ class BluetoothHandler {
     flutterBlue.startScan(timeout: Duration(seconds: 4));
 
     // listen to scan results
-    var subscription = flutterBlue.scanResults.listen((results) async {
+    var subscription;
+    subscription = flutterBlue.scanResults.listen((results) async {
       // do something with scan results
       for (ScanResult r in results) {
         if (r.device.name == "earconnect" && !earConnectFound) {
@@ -59,10 +60,20 @@ class BluetoothHandler {
 
           await flutterBlue.stopScan();
 
-          r.device.state.listen((state) {
+          r.device.state.listen((state) async {
             // listen for connection state changes
-            _isConnected = state == BluetoothDeviceState.connected;
-            _pageState.updateConnectionStatus(_isConnected);
+            var isConnectedNew = state == BluetoothDeviceState.connected;
+            if (_isConnected != isConnectedNew) {
+              _pageState.updateConnectionStatus(isConnectedNew);
+              if (state == BluetoothDeviceState.disconnected ||
+                  state == BluetoothDeviceState.disconnecting) {
+                await r.device.disconnect();
+                subscription.cancel();
+                earConnectFound = false;
+                return;
+              }
+            }
+            _isConnected = isConnectedNew;
           });
 
           await r.device.connect();
