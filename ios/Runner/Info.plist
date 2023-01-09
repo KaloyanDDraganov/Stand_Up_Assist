@@ -56,11 +56,19 @@
 	<true/>
 	<key>Scene Configuration</key>
 	<dict/>
-	<key></key>
+	<key>NSBonjourServices</key>
+	<array>
+		<string></string>
+	</array>
+	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>The application uses Bluetooth Low Energy to connect with the Earables</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+    	<string>_dartobservatory._tcp</string>
+	</array>
 </dict>
 </plist>

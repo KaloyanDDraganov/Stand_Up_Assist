@@ -8,7 +8,7 @@ class StandUpCounter {
 
   var _accYBaseline = 0;
   final ALPHA = 0.125;
-  final STAND_UP_THRESHOLD = 20;
+  final STAND_UP_THRESHOLD = 5;
   var _totalStandUps = 0;
   var _goalStandUps = 12;
   var _stoodThisHour = false;
@@ -20,8 +20,8 @@ class StandUpCounter {
   }
 
   void handleUpdate(int accX, int accY, int accZ) {
-    _updateAccYBaseline(accY);
     _detectStandUp(accY);
+    _updateAccYBaseline(accY);
   }
 
   void _updateAccYBaseline(int accY) {
@@ -30,7 +30,7 @@ class StandUpCounter {
 
   void _detectStandUp(int accY) {
     if (!_stoodThisHour) {
-      if (accY - _accYBaseline > STAND_UP_THRESHOLD) {
+      if ((accY - _accYBaseline).abs() > STAND_UP_THRESHOLD) {
         _stoodThisHour = true;
         _totalStandUps++;
         _homePageState.updateStandUpHours(_totalStandUps);

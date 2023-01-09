@@ -14,7 +14,7 @@ class ConnectedAlert {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Okay'),
+            child: const Text('OK'),
           ),
         ],
       ),
