@@ -8,7 +8,7 @@ class StandUpCounter {
 
   var _accYBaseline = 0;
   final ALPHA = 0.125;
-  final STAND_UP_THRESHOLD = 5;
+  final STAND_UP_THRESHOLD = 20;
   var _totalStandUps = 0;
   var _goalStandUps = 12;
   var _stoodThisHour = false;

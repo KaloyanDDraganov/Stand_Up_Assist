@@ -11,6 +11,7 @@ class HomePageState extends State<HomePage> {
   var _bleConnectionStatus = "Disconnected";
   final _standUpCounter = StandUpCounter();
   var init = false;
+  var _initialConnect = false;
 
   var _standUpHours = 0;
   final _goalStandUpHours = 12;
@@ -19,12 +20,14 @@ class HomePageState extends State<HomePage> {
   void updateConnectionStatus(bool isConnected) {
     setState(() {
       _bleConnectionStatus = (isConnected) ? "Connected" : "Disconnected";
+      if (isConnected) {
+        ConnectedAlert().showAlertDialog(context);
+        _initialConnect = true;
+      }
+      if (!isConnected && _initialConnect) {
+        DisconnectedAlert().showAlertDialog(context);
+      }
     });
-    if (isConnected) {
-      ConnectedAlert().showAlertDialog(context);
-    } else {
-      DisconnectedAlert().showAlertDialog(context);
-    }
   }
 
   void updateStandUpHours(int hours) {
