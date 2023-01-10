@@ -9,14 +9,10 @@ class BluetoothHandler {
   late SleepAnalyzer _sleepAnalyzer;
 
   bool _isConnected = false;
-
   bool earConnectFound = false;
 
-  void setState(HomePageState state) {
+  BluetoothHandler(HomePageState state, SleepAnalyzer sleepAnalyzer) {
     _pageState = state;
-  }
-
-  void setSleepAnalyzer(SleepAnalyzer sleepAnalyzer) {
     _sleepAnalyzer = sleepAnalyzer;
   }
 

@@ -1,36 +1,53 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:stand_up_assist/widgets/states/HomePageState.dart';
 import '../widgets/NudgerAlert.dart';
 
+enum SleepPosition {
+  LEFT, RIGHT, BACK, BELLY
+}
+
 class SleepAnalyzer {
   late HomePageState _homePageState;
 
-  var _leftAngle = 0;
-  final ALPHA = 0.125;
-  final STAND_UP_THRESHOLD = 0.8;
-  var _totalStandUps = 0;
-  var _goalStandUps = 12;
-  var _stoodThisHour = false;
+  static const ANGLE_RANGE = 5;
+  int _leftAngle = -1;
+  SleepPosition _curPosition = SleepPosition.LEFT;
+  var active = false;
 
-  DateTime currentDate = DateTime.now();
-
-  void setState(HomePageState state) {
+  SleepAnalyzer(HomePageState state) {
     _homePageState = state;
   }
 
-  void handleUpdate(int accZ) {
-    // _updateAccYBaseline(accY);
-    // _detectStandUp(accY);
+  void start() {
+    _curPosition = SleepPosition.LEFT;
+    active = true;
   }
 
-  void _detectStandUp(int accY) {
-    // if (!_stoodThisHour) {
-    //   if (accY - _accYBaseline > STAND_UP_THRESHOLD) {
-    //     _stoodThisHour = true;
-    //     _totalStandUps++;
-    //     _homePageState.updateStandUpHours(_totalStandUps);
-    //   }
-    // }
+  void reset() {
+    active = false;
+    _homePageState.resetSleepPositionCounters();
+  }
+
+  Map<SleepPosition, int> _positionToAngleMap() {
+    return {SleepPosition.LEFT: _leftAngle, SleepPosition.RIGHT: -_leftAngle, SleepPosition.BACK: 0, SleepPosition.BELLY: -60};
+  }
+
+  void handleUpdate(int angle) {
+    _leftAngle = angle;
+    if (!active) {
+      return;
+    }
+
+    var positionMap = _positionToAngleMap();
+    // Restrict the angle to a valid value by selecting the one it is closest to
+    var fixedAngle = positionMap.values.reduce((a, b) => (a - angle).abs() <= (b - angle).abs() ? a : b);
+    var newPosition = positionMap.keys.firstWhere((position) => positionMap[position] == fixedAngle);
+
+    if (newPosition != _curPosition) {
+      _homePageState.incrementSleepPositionCounter(newPosition);
+      _curPosition = newPosition;
+    }
   }
 }

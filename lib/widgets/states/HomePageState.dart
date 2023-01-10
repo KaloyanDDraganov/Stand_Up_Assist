@@ -1,92 +1,136 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../HomePage.dart';
-import '../GoalAccomplishedAlert.dart';
-import '../ConnectedAlert.dart';
-import '../DisconnectedAlert.dart';
 import '../../application/BluetoothHandler.dart';
 import '../../application/SleepAnalyzer.dart';
 
 class HomePageState extends State<HomePage> {
-  final _bleHandler = BluetoothHandler();
-  var _bleConnectionStatus = "Disconnected";
-  final _sleepAnalyzer = SleepAnalyzer();
-  var init = false;
+  var _bleIsConnected = false;
+  late SleepAnalyzer _sleepAnalyzer;
+  late BluetoothHandler _bleHandler;
 
-  var _standUpHours = 0;
-  final _goalStandUpHours = 12;
-  var _completion = 0;
+  HomePageState() {
+    _sleepAnalyzer = SleepAnalyzer(this);
+    _bleHandler = BluetoothHandler(this, _sleepAnalyzer);
+  }
+
+  var _leftSideCount = 0;
+  var _rightSideCount = 0;
+  var _backCount = 0;
+  var _bellyCount = 0;
 
   void updateConnectionStatus(bool isConnected) {
     setState(() {
-      _bleConnectionStatus = (isConnected) ? "Connected" : "Disconnected";
+      _bleIsConnected = isConnected;
     });
-    if (isConnected) {
-      ConnectedAlert().showAlertDialog(context);
-    } else {
-      DisconnectedAlert().showAlertDialog(context);
-    }
   }
 
-  void updateStandUpHours(int hours) {
+  void incrementSleepPositionCounter(SleepPosition position) {
     setState(() {
-      _standUpHours = hours;
-      _completion = ((_standUpHours / _goalStandUpHours) * 100).round();
-
-      if (_standUpHours == _goalStandUpHours) {
-        GoalAccomplishedAlert().showAlertDialog(context);
+      switch (position) {
+        case SleepPosition.LEFT:
+          _leftSideCount++;
+          break;
+        case SleepPosition.RIGHT:
+          _rightSideCount++;
+          break;
+        case SleepPosition.BACK:
+          _backCount++;
+          break;
+        case SleepPosition.BELLY:
+          _bellyCount++;
+          break;
       }
     });
   }
 
-  void _initialize() {
-    _bleHandler.setState(this);
-    _bleHandler.setSleepAnalyzer(_sleepAnalyzer);
-    _sleepAnalyzer.setState(this);
-    init = true;
+  void resetSleepPositionCounters() {
+    setState(() {
+      _leftSideCount = 0;
+      _rightSideCount = 0;
+      _backCount = 0;
+      _bellyCount = 0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!init) {
-      _initialize();
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('FloatingActionButton Sample'),
-      ),
-      body: Center(child: Column(children: [
-        // Start button
-        ElevatedButton(
-          onPressed: () {
-          // Perform some action
-          },
-          // textColor: Colors.white,
-          // color: Colors.blue,
-          child: Text("Start"),
-        ),
-        Column(
-          children: [
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                      Text('Left side: 0'),
-                      Text('Back: 0'),
-                      Text('Right side: 0'),
-                  ],
-              ),
-              Text('Belly: 0'),
-          ],
-        ),
-        ]
-      )),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Perform some action
-        },
-        icon: Icon(Icons.bluetooth),
-        label: const Text("Test")
-      )
+    var cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
     );
+    var confirmStartActionBtn = TextButton(
+      child: Text("Continue"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        _sleepAnalyzer.start();
+      },
+    );
+
+    var confirmResetActionBtn = TextButton(
+      child: Text("Confirm"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        _sleepAnalyzer.reset();
+      },
+    );
+
+    var startButton = ElevatedButton(
+      onPressed: (!_sleepAnalyzer.active && !_bleIsConnected) ? null : () {
+        if (_sleepAnalyzer.active) {
+          showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: Text('Reset the sleep analyzer'),
+                content: Text(
+                    'Are you sure you wish to reset the analyzer? This will clear all collected data.'),
+                actions: [cancelButton, confirmResetActionBtn],
+              ));
+        } else {
+          showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: Text('Start analyzing sleep'),
+                content: Text(
+                    'Make sure to lie on your left side with the earables connected, then press "Continue".'),
+                actions: [cancelButton, confirmStartActionBtn],
+              ));
+        }
+      },
+      child: Text(_sleepAnalyzer.active ? "Reset" : "Start"),
+    );
+
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('FloatingActionButton Sample'),
+        ),
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Status: ${_bleIsConnected ? "Connected" : "Disconnected"}"),
+              startButton,
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Left side: $_leftSideCount'),
+                      Text('Back: $_backCount'),
+                      Text('Right side: $_rightSideCount'),
+                    ],
+                  ),
+                  Text('Belly: $_bellyCount'),
+                ],
+              ),
+            ]),
+        floatingActionButton: FloatingActionButton.extended(
+            onPressed: () {
+              _bleHandler.connect();
+            },
+            icon: Icon(Icons.bluetooth),
+            label: const Text("Connect")));
   }
 }
